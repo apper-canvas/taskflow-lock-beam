@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import 'react-toastify/dist/ReactToastify.css';
+
+@layer base {
+  * {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    @apply bg-gray-50 text-gray-900;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+@layer components {
+  .gradient-border {
+    @apply relative overflow-hidden rounded-xl;
+  }
+  
+  .gradient-border::before {
+    content: '';
+    @apply absolute inset-0 rounded-xl p-[2px] bg-gradient-to-r from-primary via-accent to-secondary;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: xor;
+    -webkit-mask-composite: xor;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent;
+  }
+  
+  .priority-dot {
+    @apply w-3 h-3 rounded-full;
+  }
+  
+  .priority-low { @apply bg-green-400; }
+  .priority-medium { @apply bg-yellow-400; }
+  .priority-high { @apply bg-orange-400; }
+  .priority-urgent { @apply bg-red-400 animate-pulse-subtle; }
+  
+  .project-color-dot {
+    @apply w-4 h-4 rounded-full shadow-sm;
+  }
+}
+
+/* Toast Notifications */
+.Toastify__toast-container {
+  @apply text-sm;
+}
+
+.Toastify__toast {
+  @apply rounded-xl shadow-lg;
+}
+
+.Toastify__toast--success {
+  @apply bg-white border-l-4 border-success;
+}
+
+.Toastify__toast--error {
+  @apply bg-white border-l-4 border-error;
+}
+
+.Toastify__toast--info {
+  @apply bg-white border-l-4 border-info;
+}
+
+.Toastify__toast--warning {
+  @apply bg-white border-l-4 border-warning;
+}
+
+.Toastify__progress-bar {
+  @apply bg-gradient-to-r from-primary to-accent;
+}
