@@ -9,6 +9,27 @@ class TaskServiceClass {
     this.tableName = 'task_c';
   }
 
+  async generateDescription(title) {
+    try {
+      const response = await fetch(`https://test-api.apper.io/fn/${import.meta.env.VITE_GENERATE_TASK_DESCRIPTION}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title })
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error calling generate description API:', error);
+      return {
+        success: false,
+        message: 'Network error occurred'
+      };
+    }
+  }
+
   async getAll() {
     try {
       const params = {

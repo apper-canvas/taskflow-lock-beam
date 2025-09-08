@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { toast } from "react-hot-toast";
 import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
-import Textarea from "@/components/atoms/Textarea";
-import Select from "@/components/atoms/Select";
-import FormField from "@/components/molecules/FormField";
 import PriorityIndicator from "@/components/molecules/PriorityIndicator";
+import FormField from "@/components/molecules/FormField";
+import Input from "@/components/atoms/Input";
+import Select from "@/components/atoms/Select";
+import Textarea from "@/components/atoms/Textarea";
+import Button from "@/components/atoms/Button";
 
 const TaskModal = ({ 
   isOpen, 
@@ -22,8 +23,8 @@ const TaskModal = ({
     priority: "medium",
     dueDate: ""
   });
-  
-  const [errors, setErrors] = useState({});
+const [errors, setErrors] = useState({});
+  const [isGenerating, setIsGenerating] = useState(false);
   
   useEffect(() => {
     if (task) {
@@ -46,10 +47,35 @@ const TaskModal = ({
     setErrors({});
   }, [task, isOpen]);
   
-  const handleInputChange = (field, value) => {
+const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: null }));
+    }
+  };
+
+  const handleGenerateDescription = async () => {
+    if (!formData.title?.trim()) {
+      toast.error('Please enter a task title first');
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const { TaskService } = await import('@/services/api/TaskService.js');
+      const response = await TaskService.generateDescription(formData.title);
+      
+      if (response.success) {
+        handleInputChange('description', response.description);
+        toast.success('Description generated successfully!');
+      } else {
+        toast.error(response.message || 'Failed to generate description');
+      }
+    } catch (error) {
+      console.error('Error generating description:', error);
+      toast.error('Failed to generate description. Please try again.');
+    } finally {
+      setIsGenerating(false);
     }
   };
   
@@ -132,7 +158,7 @@ const TaskModal = ({
               label="Task Title" 
               error={errors.title}
               required
-            >
+>
               <Input
                 type="text"
                 value={formData.title}
@@ -140,16 +166,37 @@ const TaskModal = ({
                 placeholder="Enter task title..."
                 error={errors.title}
                 className="text-base"
+                disabled={isGenerating}
               />
             </FormField>
             
-            <FormField label="Description">
+<FormField 
+              label="Description" 
+              action={
+                <Button
+                  type="button"
+                  variant="ai"
+                  size="sm"
+                  onClick={handleGenerateDescription}
+                  disabled={isGenerating || !formData.title?.trim()}
+                  className="h-7 px-3 text-xs"
+                >
+                  <ApperIcon 
+                    name={isGenerating ? "Loader2" : "Sparkles"} 
+                    size={12} 
+                    className={isGenerating ? "animate-spin" : ""}
+                  />
+                  {isGenerating ? 'Generating...' : 'Generate'}
+                </Button>
+              }
+            >
               <Textarea
                 value={formData.description}
                 onChange={(e) => handleInputChange("description", e.target.value)}
-                placeholder="Add a description..."
+                placeholder="Add a description or generate one from the title..."
                 rows={3}
                 className="text-sm"
+                disabled={isGenerating}
               />
             </FormField>
             
