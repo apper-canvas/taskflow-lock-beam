@@ -2,7 +2,6 @@
 
 // Cloudflare Worker globals
 /* global apper, Response, fetch */
-
 export default {
   async fetch(request) {
     if (request.method !== 'POST') {
