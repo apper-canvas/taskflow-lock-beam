@@ -1,7 +1,7 @@
 // Generate task description using OpenAI API
 
 // Cloudflare Worker globals
-/* global apper, Response, fetch */
+/* global apper, fetch, Response */
 
 export default {
   async fetch(request) {
